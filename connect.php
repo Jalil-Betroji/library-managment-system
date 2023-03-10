@@ -3,7 +3,7 @@ class Dbh {
   private $host = "localhost";
   private $username = "root";
   private $password = "";
-  private $dbName = "library_mnagment_system";
+  private $dbName = "library_managment_system";
 
   public function connect(){
       try{

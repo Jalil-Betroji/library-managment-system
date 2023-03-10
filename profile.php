@@ -1,5 +1,6 @@
 <?php
-
+require 'connect.php';
+session_start();
 ?>
 
 
@@ -50,7 +51,7 @@
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
             <a href="index.html" class="navbar-brand d-flex align-items-center text-center">
                 <div class="icon me-2">
-                    <img class="img-fluid" src="img/logo1.png" alt="Icon" style="width: 4rem; height: 4rem;">
+                    <img class="img-fluid" src="img/logo2.png" alt="Icon" style="width: 4rem; height: 4rem;">
                 </div>
                 <h1 class="m-0 text-color">Readly</h1>
             </a>
@@ -66,12 +67,13 @@
                     <div class="nav-item dropdown d-flex m-1">
                         <a href="#" class="nav-item"><img class="rounded-circle" style="width:4rem; height:4rem;"
                                 src="img/Review1.jpg">
-                            <span class="fw-bold">Jalil Betroji</span>
+                            <span class="fw-bold">
+                                <?php echo $_SESSION['Nickname'] ?>
+                            </span>
                         </a>
                         <div class="dropdown-menu rounded-0 m-0">
-                            <a href="#add_announces" class="dropdown-item" data-bs-toggle="modal"
-                                data-bs-target="#add_announces" id="add_announce">My reservations</a>
-                            <a href="#Profile" class="dropdown-item" id="setting">Setting</a>
+                            <a href="#" class="dropdown-item" id="my_Reservation">My reservations</a>
+                            <a href="#" class="dropdown-item" id="setting">Setting</a>
                             <a href="logout.php" name="logout" class="dropdown-item">Log out</a>
                         </div>
                     </div>
@@ -82,598 +84,320 @@
     </header>
     <!-- ============ Header Navbar End ============ -->
 
+    <!-- =========== Announces List Start =========== -->
 
-    <!-- =========== My Full Announces List Start ============= -->
-
-    <section class="container-xxl py-5 profile_hide" id="full_Announces_List">
+    <section class="container-xxl py-5" id="reservation_List">
         <div class="container">
             <div class="row g-0 gx-5 align-items-end">
                 <div class="col-lg-6">
                     <div class="text-start mx-auto mb-5 wow slideInLeft" data-wow-delay="0.1s">
-                        <h1 class="mb-3 container">Your reservations List</h1>
-
+                        <h1 class="mb-3">library List</h1>
+                        <p>in our platform we provide you the best books .</p>
                     </div>
                 </div>
             </div>
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-1.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell
+                        <?php
+
+                        class Library
+                        {
+                            private $conn;
+
+                            public function __construct($dbh)
+                            {
+                                $this->conn = $dbh->connect();
+                            }
+
+                            public function getreservationList()
+                            {
+                                $query = "SELECT collection.Collection_ID,collection.Type_ID,Title,Author_Name,
+                              Cover_Image,state,Type_Name,Reservation_ID,Reservation_Date,Reservation_Expiration_Date
+                              FROM collection INNER JOIN reservation ON collection.Collection_ID = reservation.Collection_ID 
+                              AND Reservation_Status = 'reserved'
+                              INNER JOIN types ON collection.Type_ID = types.Type_ID ;";
+
+                                $statement = $this->conn->prepare($query);
+                                $statement->execute();
+                                $reservationList = $statement->fetchAll(PDO::FETCH_ASSOC);
+                                return $reservationList;
+                            }
+                        }
+
+                        $dbh = new Dbh();
+                        $library = new Library($dbh);
+                        $reservationList = $library->getreservationList();
+
+                        foreach ($reservationList as $values) {
+                            ?>
+                            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="property-item rounded overflow-hidden">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href=""><img class="size img-fluid"
+                                                src="img/<?php echo $values['Cover_Image'] ?>" alt=""></a>
+                                        <div
+                                            class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
+                                            <?php echo $values['Type_Name'] ?>
+                                        </div>
+                                        <div
+                                            class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
+                                            <?php echo $values['state'] ?>
+                                        </div>
                                     </div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Appartment
+                                    <div class="p-4 pb-0">
+                                        <a class="d-block h5 mb-2" href="">
+                                            <?php echo $values['Title'] ?>
+                                        </a>
+                                        <p><i class="fa-solid fa-pen-nib text-color me-2"></i>
+                                            <?php echo $values['Author_Name'] ?>
+                                        </p>
                                     </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
+                                    <form class="d-flex justify-content-center gap-5 mb-2">
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                            data-bs-target="#more_details_modal"
+                                            onclick="getMore_Details(<?php echo $values['Collection_ID']; ?>)">
+                                            Details
+                                        </button>
+                                        <button type="button" class="cancel_Reservation btn btn-warning"
+                                            data-bs-toggle="modal" data-bs-target="#cancel_modal" id=""
+                                            onclick="cancel_reservation(<?php echo $values['Reservation_ID']; ?>)">
+                                            Cancel
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-2.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Villa
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-3.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Office
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-4.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        House
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-5.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Studio
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-6.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Villa
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
+                            <?php
+                        }
+                        ?>
                     </div>
-                </div>
-    </section>
-
-    <!-- =========== My Full Announces List End ============= -->
-
-
-    <!-- ============ Announces List Home Page Start ============ -->
-
-    <section class="container-xxl py-5" id="profile_homePage">
-        <div class="container">
-            <div class="row g-0 gx-5 align-items-end">
-                <div class="col-lg-6">
-                    <div class="text-start mx-auto mb-5 wow slideInLeft" data-wow-delay="0.1s">
-                        <h1 class="mb-3 container">Your Announces List</h1>
-
-                    </div>
-                </div>
-                <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s">
-                    <ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
-                        <li class="nav-item me-2">
-                            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-2">For Sell</a>
-                        </li>
-                        <li class="nav-item me-2">
-                            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-3">For Rent</a>
-                        </li>
-                        <li class="nav-item me-2">
-                            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-4">Published date
-                                <i class="fa-solid fa-caret-up"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item me-0">
-                            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-5">Price
-                                <i class="fa-solid fa-caret-up"></i>
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </div>
-            <div class="tab-content">
-                <div id="tab-1" class="tab-pane fade show p-0 active">
-                    <div class="row g-4">
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-1.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell
-                                    </div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Appartment
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-2.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Villa
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-3.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Office
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-4.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        House
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-5.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Sell</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Studio
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                            <div class="property-item rounded overflow-hidden">
-                                <div class="position-relative overflow-hidden">
-                                    <a href=""><img class="img-fluid" src="img/property-6.jpg" alt=""></a>
-                                    <div
-                                        class="bg-color rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                                        For Rent</div>
-                                    <div
-                                        class="bg-white rounded-top text-color position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                                        Villa
-                                    </div>
-                                </div>
-                                <div class="p-4 pb-0">
-                                    <h5 class="text-color mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="">Golden Urban House For Sell</a>
-                                    <p><i class="fa fa-map-marker-alt text-color me-2"></i>123 Street, New York,
-                                        USA</p>
-                                </div>
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-ruler-combined text-color me-2"></i>1000 m2</small>
-                                    <small class="flex-fill text-center border-end py-2"><i
-                                            class="fa fa-bed text-color me-2"></i>3 Bed</small>
-                                    <small class="flex-fill text-center py-2"><i
-                                            class="fa fa-bath text-color me-2"></i>2 Bath</small>
-                                </div>
-                                <div class="d-flex m-2 justify-content-between">
-                                    <button class="btn btn-primary">Details</button>
-                                    <button class="btn btn-warning">Update</button>
-                                    <button class="btn btn-danger">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
-                            <a class="btn btn-primary py-3 px-5" href="#full_Announces_List" id="browse_more">Browse
-                                More Announces</a>
-                        </div>
-                    </div>
-                </div>
     </section>
 
-    <!-- ============ Announces List Home Page End ============ -->
+    <!-- =========== Announces List End =========== -->
+
 
     <!-- ============ Profile Setting Start ============ -->
 
     <section class="row justify-content-center mt-5 w-100 profile_hide" id="Profile">
 
         <form class="col-md-5 profile form-input">
-            <input type="text" name="" value="Jalil" tabindex="10" required>
+            <input type="text" name="first_name" value="<?php echo $_SESSION['First_Name']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="" value="Betroji" required>
+            <input type="text" name="" value="<?php echo $_SESSION['Last_Name']; ?>" readonly>
 
-            <input type="email" name="" value="client.customer@gmail.com" tabindex="10" required>
+            <input type="email" name="" value="<?php echo $_SESSION['Email']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="" value="+212010101010" required>
+            <input type="text" name="" value="<?php echo $_SESSION['Phone']; ?>" required>
 
-            <input type="text" name="" value="GM******" tabindex="10" required>
         </form>
         <form class="col-md-5 profile form-input">
 
-            <input type="text" name="" value="Morocco" required>
+            <input type="text" name="" value="<?php echo $_SESSION['Nickname']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="" value="Tanger" tabindex="10" required>
+            <input type="text" name="" value="<?php echo $_SESSION['Occupation']; ?>" required>
 
-            <input type="text" name="" value="Tanger-Ahlan" required>
+            <input type="date" name="" value="<?php echo $_SESSION['Birth_Date']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="" value="Code Postal" tabindex="10" required>
+            <input type="text" name="" value="<?php echo $_SESSION['Address']; ?>" tabindex="10" required>
 
-            <input type="text" name="" value="Account Type" required>
         </form>
         <input type="submit" class="btn btn-warning col-md-6 container" value="Update">
     </section>
 
-    <!-- ========== Profile Setting Start ======== -->
+    <!-- ========== Profile Setting End ======== -->
 
-    <!-- =========================================== -->
-    <!-- The Start of add announce Modal -->
-    <!-- =========================================== -->
 
-    <div class="modal fade" id="add_announces" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+    <!-- More Details modal start -->
+
+    <section class="modal fade" id="more_details_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog-centered modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">
-                        Add New Announce
-                    </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="add_new_announce" method="post" enctype="multipart/form-data" class="form-input">
-                        <div id="modal_flex">
-                            <form class="form-box px-3">
-                                <div>
-                                    Select image to upload:
-                                    <input type="file" name="image" class="border-0">
-                                </div>
+                    <!-- ======== -->
 
-                                <div class="form-input">
-                                    <input type="text" name="Title" placeholder="Title">
+                    <h4 class="title text-center mt-4" id="book_Title"></h4>
 
-                                    <input type="text" name="Rooms" placeholder="Rooms">
+                    <div class="row gap-3">
+                        <form class="col">
+                            <img src="" alt="" id="book_Image" style="width:100%;height:100%;">
+                        </form>
+                        <form class="col-lg-5 px-3">
 
-                                    <input type="number" name="Amount" placeholder="Amount">
+                            <div>
+                                <h4 class="text-primary mb-4"> Author Name : <span class="text-dark"
+                                        id="author_Name"></span>
+                                </h4>
 
-                                    <select>
-                                        <option selected>City</option>
-                                        <option value="Tanger">Tanger</option>
-                                        <option value="Tetouan">Tetouan</option>
-                                        <option value="Casablanca">Casablanca</option>
-                                        <option value="Hociema">Hociema</option>
-                                        <option value="Rabat">Rabat</option>
-                                    </select>
+                                <h4 class="text-primary mb-4"> Book Type : <span class="text-dark"
+                                        id="book_Type"></span></h4>
 
-                                    <input type="text" name="house_number" placeholder="House Number">
+                                <h4 class="text-primary mb-4"> Edition date : <span class="text-dark" id="Edition_Date">
+                                    </span>
+                                </h4>
 
-                                    <select name="Category">
-                                        <option value="- Select Category -" selected>
-                                            - Select Category -
-                                        </option>
-                                        <option value="Rental" name="Type">Rental</option>
-                                        <option value="Sell" name="Type">Sell</option>
-                                    </select>
+                                <h4 class="text-primary mb-4"> Health:
+                                    <span class="text-dark" id="book_Health"></span>
+                                </h4>
 
-                                </div>
+                                <h4 class="text-primary mb-4"> Status: <span class="text-dark" id="book_Status">
+                                    </span></h4>
 
-                                <div class="form-input">
+                            </div>
 
-                                    <input type="number" name="Area" placeholder="Area">
+                        </form>
+                    </div>
 
-                                    <input type="tex" name="Bathrooms" placeholder="Bathrooms">
-
-                                    <select>
-                                        <option selected>Country</option>
-                                        <option value="Morocco">Morocco</option>
-                                    </select>
-
-                                    <input type="tex" name="code postal" placeholder="Code Postal">
-
-                                    <input type="tex" name="house_floor" placeholder="House Floor">
-
-                                    <select name="Type">
-                                        <option selected>Type</option>
-                                        <option value="Apartment">Apartment</option>
-                                        <option value="House">House</option>
-                                        <option value="Villa">Villa</option>
-                                        <option value="Office">Office</option>
-                                        <option value="Land">Land</option>
-                                    </select>
-                                </div>
-
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-warning">Add Announce</button>
-                        </div>
-                    </form>
+                    <!-- ======== -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary w-45" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- =========================================== -->
-        <!-- The End of add announce Modal -->
-        <!-- =========================================== -->
 
-        <!-- Template Javascript -->
-        <script src="js/profile.js"></script>
+    <!-- More Details modal end -->
+
+    <!-- Reservation modal start -->
+
+    <section class="modal fade" id="cancel_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog-centered modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- ======== -->
+
+                    <h4 class="title text-center mt-4" id="book_Title"></h4>
+
+                    <div class="row gap-3">
+                        <div>
+                            <h4 class="text-primary mb-4"> Attention <span class="text-dark">Are you sure you want to
+                                    cancel this reservation ?
+                                </span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <!-- ======== -->
+                </div>
+                <form class="modal-footer" method="POST" action="code.php">
+                    <button type="button" class="btn btn-primary w-45" data-bs-dismiss="modal">No</button>
+                    <button type="submit" name="cancel" id="cancel" class=" btn btn-danger w-45" value="">
+                        Yes</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Reservation modal end -->
+
+    <!-- Footer Start -->
+    <footer id="footer" class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-white mb-4">Get In Touch</h5>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Morocco,Tanger-Ahlan</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+212 567182560</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@Readly.com</p>
+                    <div class="d-flex pt-2">
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-4">Quick Links</h5>
+                    <a class="btn btn-link text-white-50" href="">About Us</a>
+                    <a class="btn btn-link text-white-50" href="">Contact Us</a>
+                    <a class="btn btn-link text-white-50" href="">Our Services</a>
+                    <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
+                    <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-4">Newsletter</h5>
+                    <p>Subscribe to our Newsletter to get in touch with every new Book.</p>
+                    <div class="position-relative mx-auto" style="max-width: 400px;">
+                        <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5 email_Validation" type="text"
+                            placeholder="Your email">
+                        <button type="button"
+                            class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <img src="img/logo1.png" alt="" style="width: 15rem;height: 15rem;">
+                </div>
+
+
+            </div>
+        </div>
+        <div class="copyright d-flex justify-content-center">
+            <p>&copy; <a class="border-bottom" href="#">Readly.com</a>,
+                All Right
+                Reserved.2023-2024
+            </p>
+        </div>
+    </footer>
+
+    <!-- Footer End -->
+
+    <!-- Template Javascript -->
+    <script src="js/profile.js"></script>
+    <script>
+        const xhttp = new XMLHttpRequest();
+
+        book_Data = [];
+        function getMore_Details(Collection_ID) {
+            console.log(Collection_ID);
+
+            xhttp.open("GET", "details.php?Book_Info=" + Collection_ID, true);
+            xhttp.send();
+
+            // Define a callback function
+            xhttp.onload = function () {
+                console.log(xhttp.response);
+                if (this.readyState == 4 && this.status == 200) {
+                    book_Data = JSON.parse(this.response);
+
+                    document.getElementById("book_Image").src = `img/${book_Data.Cover_Image}`;
+                    document.getElementById("book_Title").innerHTML = book_Data.Title;
+                    document.getElementById("author_Name").innerHTML = book_Data.Author_Name;
+                    document.getElementById("book_Type").innerHTML = book_Data.Type_Name;
+                    document.getElementById("Edition_Date").innerHTML = book_Data.Edition_Date;
+                    document.getElementById("book_Health").innerHTML = book_Data.State;
+                    document.getElementById("book_Status").innerHTML = book_Data.Status;
+                    document.getElementById("borrow").setAttribute('value', book_Data.Collection_ID);
+                }
+            };
+        }
+        function cancel_reservation(Reservation_ID) {
+            console.log(Reservation_ID);
+
+            xhttp.open("GET", "details.php?cancel=" + Reservation_ID, true);
+            xhttp.send();
+
+            // Define a callback function
+            xhttp.onload = function () {
+                console.log(xhttp.response);
+                if (this.readyState == 4 && this.status == 200) {
+                    reserve_id = JSON.parse(this.response);
+
+                    document.getElementById("cancel").setAttribute('value', reserve_id.Reservation_ID);
+                }
+            };
+        }
+    </script>
 </body>
 
 </html>

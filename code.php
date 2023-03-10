@@ -126,10 +126,16 @@ if (isset($_POST['borrow'])) {
         exit();
     }
 }
-// Delete expired reservations
-$dbh = new Dbh();
-$conn = $dbh->connect();
-$deleteSql = "DELETE FROM reservation WHERE Reservation_Date < DATE_SUB(NOW(), INTERVAL 24 HOUR) AND Collection_ID NOT IN (SELECT Collection_ID FROM borrowings)";
-$deleteStmt = $conn->prepare($deleteSql);
-$deleteStmt->execute();
+// Cancel the reservzation 
+if (isset($_POST['cancel'])) {
+    $reservation_Id = $_POST['cancel'];
+    echo $reservation_Id;
+    $dbh = new Dbh();
+    $conn = $dbh->connect();
+    $cancelsql = "DELETE FROM reservation WHERE Reservation_ID = :reservationId";
+    $cancelstm = $conn->prepare($cancelsql);
+    $cancelstm->bindValue(":reservationId", $reservation_Id, PDO::PARAM_INT);
+    $cancelstm->execute();
+    header("Location:profile.php");
+}
 ?>

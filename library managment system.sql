@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `library_mnagment_system`
+-- Database: `library_managment_system`
 --
 
 -- --------------------------------------------------------
