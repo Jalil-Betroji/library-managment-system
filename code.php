@@ -126,16 +126,109 @@ if (isset($_POST['borrow'])) {
         exit();
     }
 }
+
 // Cancel the reservzation 
+
 if (isset($_POST['cancel'])) {
     $reservation_Id = $_POST['cancel'];
     echo $reservation_Id;
     $dbh = new Dbh();
     $conn = $dbh->connect();
-    $cancelsql = "DELETE FROM reservation WHERE Reservation_ID = :reservationId";
-    $cancelstm = $conn->prepare($cancelsql);
-    $cancelstm->bindValue(":reservationId", $reservation_Id, PDO::PARAM_INT);
-    $cancelstm->execute();
-    header("Location:profile.php");
+    // $cancelsql = "DELETE FROM reservation WHERE Reservation_ID = :reservationId";
+    // $cancelstm = $conn->prepare($cancelsql);
+    // $cancelstm->bindValue(":reservationId", $reservation_Id, PDO::PARAM_INT);
+    // $cancelstm->execute();
+
+    $getcollection_ID ="SELECT Collection_ID FROM reservation WHERE Reservation_ID = :reservationId";
+    $updatestatus = $conn->prepare($getcollection_ID);
+    $updatestatus->bindValue(":reservationId", $reservation_Id, PDO::PARAM_INT);
+    $updatestatus->execute();
+    print_r($updatestatus) ;
+    $updatecollection = "UPDATE collection SET Status = 'available' WHERE Collection_ID = $collection_ID";
+    // header("Location:profile.php");
 }
+
+// Update the profile info 
+
+// if(isset($_POST['profileUpdate'])){
+
+//   $first_Name = $_POST['profile_FName'];
+//   $last_Name = $_POST['profile_LName'];
+//   $phone = $_POST['profile_Phone'];
+//   $email = $_POST['profile_Email'];
+//   $username = $_POST['username'];
+//   $birthday = $_POST['profile_Birthday'];
+//   $address = $_POST['profile_Address'];
+//   $occupation = $_POST['profile_Occupation'];
+
+// class Database extends Dbh{
+
+//     public function updateClientInfo($username, $first_Name , $last_Name , $phone , $email , $birthday , $address , $occupation ) {
+        
+//         $existing_clients = $this->connect()->prepare("SELECT * FROM client WHERE Phone = :phone OR Email = :email");
+//         $existing_clients->execute(['nickname' => $username,'phone' => $phone, 'email' => $email]);
+//         $existing_client = $existing_clients->fetch(PDO::FETCH_ASSOC);
+//         if ($existing_client && $existing_client['Nickname'] != $username) {
+//             return "Error: phone, email, or username already exists";
+//         }
+//         $update_fields = [];
+//         if (!is_null($username)) {
+//             $update_fields[] = "Nickname = :username";
+//         }
+//         if (!is_null($first_Name)) {
+//             $update_fields[] = "First_Name = :first_Name";
+//         }
+//         if (!is_null($last_Name)) {
+//             $update_fields[] = "Last_Name = :last_Name";
+//         }
+//         if (!is_null($birthday)) {
+//             $update_fields[] = "Birth_Date = :birthday";
+//         }
+//         if (!is_null($address)) {
+//             $update_fields[] = "Address = :address";
+//         }
+//         if (!is_null($occupation)) {
+//             $update_fields[] = "Occupation = :occupation";
+//         }
+//         if (!is_null($phone)) {
+//             $update_fields[] = "Phone = :phone";
+//         }
+//         if (!is_null($email)) {
+//             $update_fields[] = "Email = :email";
+//         }
+        
+//         if (count($update_fields) > 0) {
+//             $update_query = "UPDATE client SET " . implode(", ", $update_fields) . " WHERE Nickname = :username";
+//             $stmt = $this->connect()->prepare($update_query);
+//             $stmt->bindParam(':username', $username, PDO::PARAM_INT);
+//             if (!is_null($first_Name)) {
+//                 $stmt->bindParam(':first_Name', $first_Name, PDO::PARAM_STR);
+//             }
+//             if (!is_null($last_Name)) {
+//                 $stmt->bindParam(':last_Name', $last_Name, PDO::PARAM_STR);
+//             }
+//             if (!is_null($phone)) {
+//                 $stmt->bindParam(':phone', $phone, PDO::PARAM_STR);
+//             }
+//             if (!is_null($email)) {
+//                 $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+//             }
+//             if (!is_null($username)) {
+//                 $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+//             }
+//             if (!is_null($birthday)) {
+//                 $stmt->bindParam(':birthday', $birthday, PDO::PARAM_STR);
+//             }
+//             if (!is_null($address)) {
+//                 $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+//             }
+//             if (!is_null($occupation)) {
+//                 $stmt->bindParam(':occupation', $occupation, PDO::PARAM_STR);
+//             }
+//         }
+//     }
+//  }
+
+
+// }
 ?>

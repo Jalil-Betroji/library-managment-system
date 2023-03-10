@@ -179,32 +179,33 @@ session_start();
 
 
     <!-- ============ Profile Setting Start ============ -->
+  <section>
+    <from action="code.php" method="POST" class="row justify-content-center mt-5 w-100 profile_hide" id="Profile">
 
-    <section class="row justify-content-center mt-5 w-100 profile_hide" id="Profile">
+        <div class="col-md-5 profile form-input">
+            <input type="text" name="profile_FName" value="<?php echo $_SESSION['First_Name']; ?>" tabindex="10" readonly>
 
-        <form class="col-md-5 profile form-input">
-            <input type="text" name="first_name" value="<?php echo $_SESSION['First_Name']; ?>" tabindex="10" readonly>
+            <input type="text" name="profile_LName" value="<?php echo $_SESSION['Last_Name']; ?>" readonly>
 
-            <input type="text" name="" value="<?php echo $_SESSION['Last_Name']; ?>" readonly>
+            <input type="email" name="profile_Email" value="<?php echo $_SESSION['Email']; ?>" tabindex="10" readonly>
 
-            <input type="email" name="" value="<?php echo $_SESSION['Email']; ?>" tabindex="10" readonly>
+            <input type="text" name="profile_Phone" value="<?php echo $_SESSION['Phone']; ?>" required>
 
-            <input type="text" name="" value="<?php echo $_SESSION['Phone']; ?>" required>
+        </div>
+        <div class="col-md-5 profile form-input">
 
-        </form>
-        <form class="col-md-5 profile form-input">
+            <input type="text" name="username" value="<?php echo $_SESSION['Nickname']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="" value="<?php echo $_SESSION['Nickname']; ?>" tabindex="10" readonly>
+            <input type="text" name="profile_Occupation" value="<?php echo $_SESSION['Occupation']; ?>" required>
 
-            <input type="text" name="" value="<?php echo $_SESSION['Occupation']; ?>" required>
+            <input type="date" name="profile_Birthday" value="<?php echo $_SESSION['Birth_Date']; ?>" tabindex="10" readonly>
 
-            <input type="date" name="" value="<?php echo $_SESSION['Birth_Date']; ?>" tabindex="10" readonly>
+            <input type="text" name="profile_Address" value="<?php echo $_SESSION['Address']; ?>" tabindex="10" required>
 
-            <input type="text" name="" value="<?php echo $_SESSION['Address']; ?>" tabindex="10" required>
-
-        </form>
-        <input type="submit" class="btn btn-warning col-md-6 container" value="Update">
-    </section>
+        </div>
+            <input type="submit" name="profileUpdate" class="btn btn-warning col-md-6 container" value="Update">
+    </form>
+</section>
 
     <!-- ========== Profile Setting End ======== -->
 
@@ -265,7 +266,7 @@ session_start();
 
     <!-- More Details modal end -->
 
-    <!-- Reservation modal start -->
+    <!-- Cancel Reservation modal start -->
 
     <section class="modal fade" id="cancel_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog-centered modal-dialog modal-xl">
@@ -299,7 +300,7 @@ session_start();
     </section>
 
 
-    <!-- Reservation modal end -->
+    <!-- Cancel Reservation modal end -->
 
     <!-- Footer Start -->
     <footer id="footer" class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -377,7 +378,6 @@ session_start();
                     document.getElementById("Edition_Date").innerHTML = book_Data.Edition_Date;
                     document.getElementById("book_Health").innerHTML = book_Data.State;
                     document.getElementById("book_Status").innerHTML = book_Data.Status;
-                    document.getElementById("borrow").setAttribute('value', book_Data.Collection_ID);
                 }
             };
         }

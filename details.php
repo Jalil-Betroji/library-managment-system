@@ -11,7 +11,7 @@ if (isset($_GET["Book_Info"])) {
     $conn = $dbh->connect();
 
     $sql = "SELECT Collection_ID,Cover_Image,Author_Name,Title,Edition_Date,State,Status,Type_Name
-     FROM `collection` INNER JOIN types ON  collection.Collection_ID = $Reservation_ID ";
+     FROM `collection` INNER JOIN types ON  collection.Collection_ID = $Collection_ID ";
 
     // execute a query
     $statement = $conn->query($sql);
