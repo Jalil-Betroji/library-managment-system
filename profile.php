@@ -238,34 +238,38 @@ if ($_SESSION['logged_in'] !== true) {
 
                     <h4 class="title text-center mt-4" id="book_Title"></h4>
 
-                    <div class="row gap-3">
+                    <div class="row justify-content-center mt-5 w-100">
                         <form class="col">
                             <img src="" alt="" id="book_Image" style="width:100%;height:100%;">
                         </form>
-                        <form class="col-lg-5 px-3">
 
-                            <div>
-                                <h4 class="text-primary mb-4"> Author Name : <span class="text-dark"
-                                        id="author_Name"></span>
-                                </h4>
+                        <div class="col-md-5">
+                            <h4 class="text-primary mb-4"> Author Name : <span class="text-dark"
+                                    id="author_Name"></span>
+                            </h4>
 
-                                <h4 class="text-primary mb-4"> Book Type : <span class="text-dark"
-                                        id="book_Type"></span></h4>
+                            <h4 class="text-primary mb-4"> Book Type : <span class="text-dark" id="book_Type"></span>
+                            </h4>
 
-                                <h4 class="text-primary mb-4"> Edition date : <span class="text-dark" id="Edition_Date">
-                                    </span>
-                                </h4>
+                            <h4 class="text-primary mb-4"> Edition date : <span class="text-dark" id="book_Edition">
+                                </span>
+                            </h4>
+                        </div>
+                        <div class="col-md-5">
+                            <h4 class="text-primary mb-4"> Number of pages : <span class="text-dark"
+                                    id="Number_Of_Pages">
+                                </span>
+                            </h4>
 
-                                <h4 class="text-primary mb-4"> Health:
-                                    <span class="text-dark" id="book_Health"></span>
-                                </h4>
+                            <h4 class="text-primary mb-4"> Health:
+                                <span class="text-dark" id="book_Health"></span>
+                            </h4>
 
-                                <h4 class="text-primary mb-4"> Status: <span class="text-dark" id="book_Status">
-                                    </span></h4>
+                            <h4 class="text-primary mb-4"> Status: <span class="text-dark" id="book_Status">
+                                </span></h4>
 
-                            </div>
+                        </div>
 
-                        </form>
                     </div>
 
                     <!-- ======== -->
