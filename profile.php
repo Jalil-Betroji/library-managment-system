@@ -1,6 +1,11 @@
 <?php
 require 'connect.php';
 session_start();
+if ($_SESSION['logged_in'] !== true) {
+    // Redirect the user to the login page
+    header("Location: locked.php");
+    exit;
+}
 ?>
 
 
@@ -60,7 +65,7 @@ session_start();
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto">
-                    <a href="homepage.php" class="nav-item nav-link active">Home</a>
+                    <a href="librarypage.php" class="nav-item nav-link active">Home</a>
                     <a href="#footer" class="nav-item nav-link">About Us</a>
 
 
@@ -179,33 +184,42 @@ session_start();
 
 
     <!-- ============ Profile Setting Start ============ -->
-  <section>
-    <from action="code.php" method="POST" class="row justify-content-center mt-5 w-100 profile_hide" id="Profile">
+    <section>
+        <form action="code.php" method="POST" class="row justify-content-center mt-5 w-100 profile_hide" id="Profile">
 
-        <div class="col-md-5 profile form-input">
-            <input type="text" name="profile_FName" value="<?php echo $_SESSION['First_Name']; ?>" tabindex="10" readonly>
+            <div class="col-md-5 profile form-input">
+                <label for="text" class="mx-3">First Name</label>
+                <input type="text" name="profile_FName" value="<?php echo $_SESSION['First_Name']; ?>" tabindex="10">
 
-            <input type="text" name="profile_LName" value="<?php echo $_SESSION['Last_Name']; ?>" readonly>
+                <label for="text" class="mx-3">Last Name</label>
+                <input type="text" name="profile_LName" value="<?php echo $_SESSION['Last_Name']; ?>">
 
-            <input type="email" name="profile_Email" value="<?php echo $_SESSION['Email']; ?>" tabindex="10" readonly>
+                <label for="text" class="mx-3">Email</label>
+                <input type="email" name="profile_Email" value="<?php echo $_SESSION['Email']; ?>" tabindex="10">
 
-            <input type="text" name="profile_Phone" value="<?php echo $_SESSION['Phone']; ?>" required>
+                <label for="text" class="mx-3">Phone Number</label>
+                <input type="text" name="profile_Phone" value="<?php echo $_SESSION['Phone']; ?>" required>
 
-        </div>
-        <div class="col-md-5 profile form-input">
+            </div>
+            <div class="col-md-5 profile form-input">
 
-            <input type="text" name="username" value="<?php echo $_SESSION['Nickname']; ?>" tabindex="10" readonly>
+                <label for="text" class="mx-3">Username</label>
+                <input type="text" name="username" value="<?php echo $_SESSION['Nickname']; ?>" tabindex="10" readonly>
 
-            <input type="text" name="profile_Occupation" value="<?php echo $_SESSION['Occupation']; ?>" required>
+                <label for="text" class="mx-3">Occupation</label>
+                <input type="text" name="profile_Occupation" value="<?php echo $_SESSION['Occupation']; ?>" required>
 
-            <input type="date" name="profile_Birthday" value="<?php echo $_SESSION['Birth_Date']; ?>" tabindex="10" readonly>
+                <label for="date" class="mx-3">Birth date</label>
+                <input type="date" name="profile_Birthday" value="<?php echo $_SESSION['Birth_Date']; ?>" tabindex="10">
 
-            <input type="text" name="profile_Address" value="<?php echo $_SESSION['Address']; ?>" tabindex="10" required>
+                <label for="text" class="mx-3">Address</label>
+                <input type="text" name="profile_Address" value="<?php echo $_SESSION['Address']; ?>" tabindex="10"
+                    required>
 
-        </div>
+            </div>
             <input type="submit" name="profileUpdate" class="btn btn-warning col-md-6 container" value="Update">
-    </form>
-</section>
+        </form>
+    </section>
 
     <!-- ========== Profile Setting End ======== -->
 

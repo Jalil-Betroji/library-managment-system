@@ -1,6 +1,11 @@
 <?php
 require_once 'connect.php';
 session_start();
+if ($_SESSION['logged_in'] !== true) {
+    // Redirect the user to the login page
+    header("Location: locked.php");
+    exit;
+}
 ?>
 
 
@@ -9,7 +14,7 @@ session_start();
 
 <head>
     <meta charset="utf-8">
-    <title>HomeLand - Real Estate</title>
+    <title>Readly - Your library space</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <!-- Bootstrap -->
@@ -51,7 +56,7 @@ session_start();
         <!-- Navbar Start -->
         <div class="container-fluid nav-bar bg-transparent">
             <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
-                <a href="index.html" class="navbar-brand d-flex align-items-center text-center">
+                <a href="librarypage.php" class="navbar-brand d-flex align-items-center text-center">
                     <div class="icon me-2">
                         <img class="img-fluid" src="img/logo2.png" alt="Icon" style="width: 4rem; height: 4rem;">
                     </div>
@@ -62,9 +67,9 @@ session_start();
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="homepage.php" class="nav-item nav-link active">Home</a>
                         <a href="#footer" class="nav-item nav-link">About</a>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a href="#footer" class="nav-item nav-link">Contact</a>
                         <div class="nav-item dropdown d-flex m-1">
 
                             <a href="#" class="nav-item"><img class="rounded-circle" style="width:4rem; height:4rem;"
@@ -122,7 +127,7 @@ session_start();
         <section class="container-fluid bg-color mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
             <div class="container">
                 <form action="librarypage.php" method="POST">
-                    <div class="d-flex gap-2 justify-content-centerflex-wrap">
+                    <div class="d-flex gap-2">
                         <input type="text" class="border-0 rounded select_property p-3 container" name="book_Search"
                             placeholder="Search about your book">
                         <button class="btn btn-dark border-0" name="searchbtn">Search</button>
@@ -131,6 +136,7 @@ session_start();
             </div>
         </section>
         <!-- Search End -->
+
 
         <!-- =========== Announces List Start =========== -->
 
@@ -144,12 +150,37 @@ session_start();
                         </div>
                     </div>
                 </div>
+                <!-- Filter Start -->
+                <section class="container-fluid wow fadeIn" data-wow-delay="0.1s" style="padding-bottom: 2rem;">
+                    <div class="container">
+                        <form action="librarypage.php" method="POST">
+                            <div class="d-flex  justify-content-around flex-wrap">
+                                <button class="btn border" name="Book" value="Book">Book</button>
+                                <button class="btn border" name="CD" value="CD">CD</button>
+                                <button class="btn border" name="DVD" value="DVD">DVD</button>
+                                <button class="btn border" name="magazine" value="magazine">magazine</button>
+                                <button class="btn border" name="magazine" value="research Dissertation">research
+                                    Dissertation</button>
+                                <button class="btn border" name="All Types" value="All Types">All Types</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                <!-- Filter End -->
                 <div class="tab-content">
                     <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
                             <?php
                             if (isset($_POST['searchbtn'])) {
                                 include 'search.php';
+                            } elseif (isset($_POST['Book'])) {
+                                include 'sort.php';
+                            } elseif (isset($_POST['CD'])) {
+                                include 'sort.php';
+                            } elseif (isset($_POST['DVD'])) {
+                                include 'sort.php';
+                            } elseif (isset($_POST['magazine'])) {
+                                include 'sort.php';
                             } else {
                                 class Library
                                 {
@@ -163,8 +194,8 @@ session_start();
                                     public function getLibraryList()
                                     {
                                         $query = "SELECT collection.Collection_ID,collection.Type_ID,Title,Author_Name,
-                              Cover_Image,state,types.Type_Name
-                              FROM collection INNER JOIN types ON collection.Type_ID = types.Type_ID;";
+                                         Cover_Image,state,types.Type_Name
+                                         FROM collection INNER JOIN types ON collection.Type_ID = types.Type_ID;";
 
                                         $statement = $this->conn->prepare($query);
                                         $statement->execute();
@@ -250,7 +281,11 @@ session_start();
 
                                                 <h4 class="text-primary mb-4"> Edition date : <span class="text-dark"
                                                         id="book_Edition">
-                                                        m2</span>
+                                                    </span>
+                                                </h4>
+                                                <h4 class="text-primary mb-4"> Number of pages : <span class="text-dark"
+                                                        id="Number_Of_Pages">
+                                                    </span>
                                                 </h4>
 
                                                 <h4 class="text-primary mb-4"> Health:
@@ -271,7 +306,8 @@ session_start();
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-primary w-45"
                                         data-bs-dismiss="modal">Cancel</button>
-                                    <a href="messenger.html"><button type="button" class="btn btn-primary w-45">
+                                    <a href=""><button type="button" class="btn btn-primary w-45" data-bs-toggle="modal"
+                                            data-bs-target="#reservation_modal" data-bs-dismiss="modal">
                                             Reserve</button></a>
                                 </div>
                             </div>
@@ -280,6 +316,46 @@ session_start();
 
 
                     <!-- More detaials modal end -->
+
+                    <!-- Reservation modal start -->
+
+                    <section class="modal fade" id="reservation_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog-centered modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- ======== -->
+
+                                    <h4 class="title text-center mt-4" id="book_Title"></h4>
+
+                                    <div class="row gap-3">
+                                        <div>
+                                            <h4 class="text-primary mb-4"> Rules : <span class="text-dark">You need
+                                                    to confirm your reservation within 24 hours
+                                                </span>
+                                            </h4>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- ======== -->
+                                </div>
+                                <form class="modal-footer" method="POST" action="code.php">
+                                    <button type="button" class="btn btn-primary w-45"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" name="borrow" id="borrow" class="btn btn-primary w-45">
+                                        Borrow</button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+
+                    <!-- Reservation modal end -->
 
     </main>
 
@@ -325,7 +401,7 @@ session_start();
             </div>
         </div>
         <div class="copyright d-flex justify-content-center">
-            <p>&copy; <a class="border-bottom" href="#">Readly.com</a>,
+            <p>&copy; <a class="border-bottom" href="#">Jalil.Betroji</a>,
                 All Right
                 Reserved.2023-2024
             </p>
@@ -370,8 +446,10 @@ session_start();
                     document.getElementById("author_Name").innerHTML = book_Data.Author_Name;
                     document.getElementById("book_Type").innerHTML = book_Data.Type_Name;
                     document.getElementById("book_Edition").innerHTML = book_Data.Edition_Date;
+                    document.getElementById("Number_Of_Pages").innerHTML = book_Data.Number_Of_Pages;
                     document.getElementById("book_Health").innerHTML = book_Data.State;
                     document.getElementById("book_Status").innerHTML = book_Data.Status;
+                    document.getElementById("borrow").setAttribute('value', book_Data.Collection_ID);
                 }
             };
         }

@@ -1,26 +1,27 @@
 <?php
 require_once('connect.php');
 
-if (isset($_GET["Book_Info"])) {
+if (isset($_GET["reserved_book"])) {
 
-    $Collection_ID = $_GET["Book_Info"];
+    $Reservation_ID = $_GET["reserved_book"];
 
     // Create a new Dbh object
     $dbh = new Dbh();
     // Call the connect method to establish a connection to the database
     $conn = $dbh->connect();
 
-    $sql = "SELECT a.Collection_ID, a.Cover_Image, a.Author_Name, a.Title, a.Edition_Date, a.Number_Of_Pages, a.State, a.Status, b.Type_Name
+    // $sql = "SELECT a.Collection_ID, a.Cover_Image, a.Author_Name, a.Title, a.Edition_Date, a.Number_Of_Pages, a.State, a.Status, b.Type_Name
+    // FROM `collection` a
+    // INNER JOIN types b ON a.Type_ID = b.Type_ID
+    // WHERE a.Collection_ID = $Reservation_ID";
+
+    $sql = "SELECT a.Collection_ID, a.Cover_Image, a.Author_Name, a.Title, a.Edition_Date, a.Number_Of_Pages, a.State, a.Status, b.Type_Name, c.Reservation_ID, c.Nickname, d.CIN
     FROM `collection` a
     INNER JOIN types b ON a.Type_ID = b.Type_ID
-    WHERE a.Collection_ID = $Collection_ID";
+    INNER JOIN reservation c ON c.Collection_ID = a.Collection_ID
+    INNER JOIN client d ON d.Nickname = c.Nickname
+    WHERE c.Reservation_ID = $Reservation_ID";
 
-    //     $sql = "SELECT a.Collection_ID, a.Cover_Image, a.Author_Name, a.Title, a.Edition_Date, a.Number_Of_Pages, a.State, a.Status, b.Type_Name, c.Nickname, d.CIN
-// FROM `collection` a
-// INNER JOIN types b ON a.Type_ID = b.Type_ID
-// INNER JOIN reservation c ON c.Collection_ID = a.Collection_ID
-// INNER JOIN client d ON d.Nickname = c.Nickname
-// WHERE a.Collection_ID = $Collection_ID";
 
 
     // execute a query

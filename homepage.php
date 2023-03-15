@@ -1,6 +1,11 @@
 <?php
 require_once 'connect.php';
 session_start();
+if ($_SESSION['logged_in'] !== true) {
+    // Redirect the user to the login page
+    header("Location: locked.php");
+    exit;
+}
 ?>
 
 
@@ -327,8 +332,8 @@ session_start();
                         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s"
                             style="max-width: 600px;">
                             <h1 class="mb-3">Our Partners</h1>
-                            <p>In HomeLand We have best estate agency partaners tha you can find
-                                with more than 20 years of experience building and designing houses.</p>
+                            <p>In Readly We have best Collections providers that you can find
+                                with more than 20 years of printing books.</p>
                         </div>
                         <div class="row g-4">
                             <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -489,7 +494,11 @@ session_start();
 
                                                 <h4 class="text-primary mb-4"> Edition date : <span class="text-dark"
                                                         id="book_Edition">
-                                                        m2</span>
+                                                        </span>
+                                                </h4>
+                                                <h4 class="text-primary mb-4"> Number of pages : <span class="text-dark"
+                                                        id="Number_Of_Pages">
+                                                        </span>
                                                 </h4>
 
                                                 <h4 class="text-primary mb-4"> Health:
@@ -606,7 +615,7 @@ session_start();
             </div>
         </div>
         <div class="copyright d-flex justify-content-center">
-            <p>&copy; <a class="border-bottom" href="#">Readly.com</a>,
+            <p>&copy; <a class="border-bottom" href="#">Jalil.Betroji</a>,
                 All Right
                 Reserved.2023-2024
             </p>
@@ -651,6 +660,7 @@ session_start();
                     document.getElementById("author_Name").innerHTML = book_Data.Author_Name;
                     document.getElementById("book_Type").innerHTML = book_Data.Type_Name;
                     document.getElementById("book_Edition").innerHTML = book_Data.Edition_Date;
+                    document.getElementById("Number_Of_Pages").innerHTML = book_Data.Number_Of_Pages;
                     document.getElementById("book_Health").innerHTML = book_Data.State;
                     document.getElementById("book_Status").innerHTML = book_Data.Status;
                     document.getElementById("borrow").setAttribute('value', book_Data.Collection_ID);

@@ -10,7 +10,7 @@ class LoginContrl extends Login {
        $this->login_Email = $login_Email;
        $this->login_Password = $login_Password;
     }
-
+    
     public function emptyInputs() {
         $result;
         if (empty($this->login_Email) || empty($this->login_Password)) {
